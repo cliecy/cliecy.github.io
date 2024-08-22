@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.0-M1'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.cliecy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
+    // Hibernate 6 支持 SQLite 方言
+    implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.3.Final'
+    
+    // SQLite JDBC 驱动
+    implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
+    
+    // Lombok 简化 get, set, toString, log 等
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Apache 通用工具库
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
+    
+    // 编码通用工具库
+    implementation 'commons-codec:commons-codec:1.16.0'
+    
+    // JUnit 5 (JUnit Jupiter) 测试依赖
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
