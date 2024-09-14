@@ -20,8 +20,8 @@ public class BlogPostController {
 
     @GetMapping("/{id}")
     public BlogPost getPostById(@PathVariable Long id) {
-//        return blogPostService.getPostById(id);
-        return new BlogPost();
+        return blogPostService.getPostById(id);
+//        return new BlogPost();
     }
 
     @PostMapping

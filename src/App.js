@@ -9,6 +9,7 @@ const baseStyle = {
 
 const App = () => {
   const [value, setValue] = React.useState('horizontal');
+  var c = "HELLO";
   return (
     <Flex gap="middle" vertical>
       <Radio.Group value={value} onChange={(e) => setValue(e.target.value)}>

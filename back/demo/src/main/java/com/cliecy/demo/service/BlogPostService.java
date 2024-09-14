@@ -21,6 +21,7 @@ public class BlogPostService {
     }
 
     public BlogPost savePost(BlogPost post) {
+        System.out.println("Saving post with title: " + post.getTitle() + " and content: " + post.getContent());
         return blogPostRepository.save(post);
     }
 
