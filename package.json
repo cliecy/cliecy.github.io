@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://cliecy.github.io",
   "dependencies": {
+    "@ant-design/pro-components": "^2.7.18",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,10 +13,13 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "antd": "^5.20.1",
+    "axios": "^1.7.2",
     "my-app": "file:",
     "react": "^18.3.1",
+    "react-router-dom": "^6.26.2",
     "react-scripts": "^5.0.1",
     "typescript": "^4.9.5",
+    "umi-request": "^1.4.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

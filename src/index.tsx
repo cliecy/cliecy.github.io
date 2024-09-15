@@ -1,20 +1,38 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import "./static/index.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./Pages/Home";
+import Register from "./Pages/Register";
+import Login from "./Pages/Login";
+import { createRoot } from "react-dom/client";
+import PostPage from "./Pages/PostPage";
+import App from "./App";
+import React from "react";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/Register",
+        element: <Register />,
+      },
+      { path: "/Login", element: <Login /> },
+      {
+        path: "/PostPage/:id/:title",
 
-const r = document.getElementById('root')
-if (r!== null) {
-  const root = ReactDOM.createRoot(r);
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-}
+        element: <PostPage />,
+      },
+    ],
+  },
+]);
 
-
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Failed to find the root element");
+const root = createRoot(rootElement);
+root.render(<React.StrictMode>
+  <RouterProvider router={router} />
+  </React.StrictMode>);
