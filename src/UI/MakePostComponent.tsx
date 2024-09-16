@@ -23,7 +23,7 @@ const mp = async (values: PostFieldType) => {
 
 const MakePostComponent = () => {
   const [form] = Form.useForm();
-  if (storageUtils.getUser() == false) return <></>;
+  if (!storageUtils.getUser()) return <></>;
   return (
     <>
       <Form

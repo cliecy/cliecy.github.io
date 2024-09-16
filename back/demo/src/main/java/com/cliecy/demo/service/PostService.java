@@ -38,10 +38,10 @@ public class PostService {
         post.setAuthorId(postDetails.getAuthorId());
         post.setContent(postDetails.getContent());
         post.setFloor(postDetails.getFloor());
-        post.setIsLocked(postDetails.getIsLocked());
-        post.setIsDeleted(postDetails.getIsDeleted());
-        post.setIsTop(postDetails.getIsTop());
-        post.setIsInvisible(postDetails.getIsInvisible());
+        post.setLocked(postDetails.isLocked());
+        post.setDeleted(postDetails.isDeleted());
+        post.setTop(postDetails.isTop());
+        post.setInvisible(postDetails.isInvisible());
         return postRepository.save(post);
     }
 
@@ -53,7 +53,7 @@ public class PostService {
     // Safe delete a post by ID
     public void safeDeletePostById(Long id) {
         Post post = getPostById(id);
-        post.setIsDeleted(true);
+        post.setDeleted(true);
         postRepository.save(post);
     }
 }
