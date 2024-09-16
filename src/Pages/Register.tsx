@@ -4,6 +4,8 @@ import { FieldType } from './Login';
 import { RegisterFunc } from '../Lib/lib';
 import { Redirect } from './Login';
 import storageUtils from '../Lib/storageUtils';
+import { ipAddress } from '../App';
+import axios from 'axios';
 export type RegisterFieldType = {
     userName?: string;
     password?: string;
@@ -18,6 +20,17 @@ const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
 const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
     console.log('Failed:', errorInfo);
 };
+
+
+const test = () => {
+    axios.get('http://localhost:8080/api/posts').then((response) => {
+        console.log(response)
+    }).catch((error) => {
+        console.log(error)
+    })
+    console.log('test'+ipAddress);
+    alert("api posts suceess");
+}
 
 const Login: React.FC = () => (
     <>
@@ -82,8 +95,12 @@ const Login: React.FC = () => (
             <Button type="primary" htmlType="submit">
                 Submit
             </Button>
+
         </Form.Item>
     </Form>
+    <Button onClick={test}>
+        test
+    </Button>
     {}
     </>
 
