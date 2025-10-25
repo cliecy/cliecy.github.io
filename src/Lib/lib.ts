@@ -1,119 +1,231 @@
 import {
     Post,
-    ReplyGet,
-    ReplyRequest,
-    PostGet,
-    PostRequest,
     Reply,
-    MakeReplyType,
+    ReplyRequest,
+    PostRequest,
     GetUserType,
     ShareAndReplies,
     HTTPStatus,
-    gender,
-    userclass
-  } from './typeDefinition';
-  import { FieldType } from "../Pages/Login";
-  import { RegisterFieldType } from "../Pages/Register";
-// import {
-//     HTTPStatus,
-//     GetUserType,
-//     PostRequest, ReplyRequest
-// } from './typeDefinition';
-// import axios from "axios";
-// import { FieldType } from "../Pages/Login";
-// import storageUtils from "./storageUtils";
-// import { RegisterFieldType } from "../Pages/Register";
-// import { ipAddress } from '../App';
+} from './typeDefinition';
+import { FieldType } from "../Pages/Login";
+import { RegisterFieldType } from "../Pages/Register";
+import { apiClient } from './api';
+import storageUtils from './storageUtils';
 
-// export async function MakePost(post: PostRequest): Promise<HTTPStatus> {
-//     let statusNum: number = 0;
-//     try {
-//         await axios.post(`http://${ipAddress}:8000/posts`, post)
-//             .then(function (response) {
-//                 console.log(response);
-//                 window.location.reload()
-//                 return { status: statusNum }
-//             }).catch(function (error) {
-//                 console.log(error);
-//                 return { status: statusNum }
-//             });
-//         return { status: statusNum }
-//     } catch {
-//         console.log("ERRORS BUT NOT AXIOS ERROR")
-//         return { status: statusNum }
-//     }
-// }
-// export async function MakeReply(reply: ReplyRequest): Promise<HTTPStatus> {
-//     let statusNum: number = 0;
-//     try {
-//         await axios.post(`http://${ipAddress}:8000/posts/${reply.PostId}`, reply)
-//             .then(function (response) {
-//                 console.log(response);
-//                 window.location.reload()
-//                 return { status: statusNum }
-//             }).catch(function (error) {
-//                 console.log(error);
-//                 return { status: statusNum }
-//             });
-//         return { status: statusNum }
-//     } catch {
-//         console.log("ERRORS BUT NOT AXIOS ERROR")
-//         return { status: statusNum }
-//     }
-//     return { status: statusNum }
-// }
+// ==================== 帖子相关 API ====================
 
+export async function MakePost(post: PostRequest): Promise<HTTPStatus> {
+    try {
+        const response = await apiClient.post('/posts', {
+            title: post.Title,
+            authorId: post.AuthorId,
+            content: post.Content,
+            floor: 0,
+            isLocked: false,
+            isDeleted: false,
+            isTop: false,
+            isInvisible: false
+        });
+        console.log('Post created:', response.data);
+        return { status: response.status };
+    } catch (error: any) {
+        console.error('Error creating post:', error);
+        return { status: error.response?.status || 500 };
+    }
+}
 
+export async function GetAllPosts(page: number = 0, size: number = 10): Promise<any[]> {
+    try {
+        const response = await apiClient.get(`/posts?page=${{page}&size=${{size}`);
+        return response.data.content || [];
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return [];
+    }
+}
 
-// interface MyResponse {
-//     data:{    UserName: string;
-//         PassWord: string;
-//         ID: number;}[];
-//     page:number;
-//     success:boolean;
-//     total:number
-// }
+export async function GetPostById(postId: number): Promise<any | null> {
+    try {
+        const response = await apiClient.get(`/posts/${{postId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        return null;
+    }
+}
 
-// export async function LoginFunc(values: FieldType): Promise<HTTPStatus> {
-//     let statusNum: number = 0;
-//     let myresponse: MyResponse | undefined;
+// ==================== 回复相关 API ====================
 
-//     try {
-//         await axios.post(`http://${ipAddress}:8000/users/login`, { UserName: values.userName, PassWord: values.password }).then(function (response) {
-//             myresponse = response.data
-//         }).catch(function (error) {
-//             console.log(error);
-//         });
+export async function MakeReply(reply: ReplyRequest): Promise<HTTPStatus> {
+    try {
+        const response = await apiClient.post('/replies', {
+            postId: reply.PostId,
+            authorId: reply.AuthorId,
+            content: reply.Content,
+            floor: 0,
+            replyTo: reply.ReplyTo || null,
+            isDeleted: false
+        });
+        console.log('Reply created:', response.data);
+        return { status: response.status };
+    } catch (error: any) {
+        console.error('Error creating reply:', error);
+        return { status: error.response?.status || 500 };
+    }
+}
 
-//         if(myresponse !== undefined){
-//             if (myresponse.data[0].UserName !== undefined && myresponse.data[0].PassWord !== undefined)
-//                 {
-//                     console.log(myresponse)
-//                     storageUtils.saveUser({ UserName:  myresponse.data[0].UserName, PassWord: myresponse.data[0].PassWord ,UserId:myresponse.data[0].ID})
-//                 }
-       
-                
-    
-//             window.location.reload()
-//         }
-//         return { status: statusNum }
-//     }
-//     catch {
-//         console.log("ERRORS BUT NOT AXIOS ERROR")
-//         return { status: statusNum }
-//     }
-// }
+export async function GetRepliesByPostId(postId: number): Promise<any[]> {
+    try {
+        const response = await apiClient.get(`/replies/post/${{postId}`);
+        return response.data || [];
+    } catch (error) {
+        console.error('Error fetching replies:', error);
+        return [];
+    }
+}
 
-// // export async function RegisterFunc(values:)
+// ==================== 用户认证 API ====================
 
-// export function Logout(): void {
-//     if (storageUtils.getUser())
-//         storageUtils.removeUser()
-//     else {
-//         console.log("already log out")
-//     }
-//     window.location.reload()
-// }
+interface LoginResponse {
+    success: boolean;
+    message: string;
+    user: any | null;
+}
+
+export async function LoginFunc(values: FieldType): Promise<HTTPStatus> {
+    try {
+        const response = await apiClient.post<LoginResponse>('/auth/login', {
+            userName: values.userName,
+            passWord: values.password
+        });
+
+        const loginData = response.data;
+
+        if (loginData.success && loginData.user) {
+            storageUtils.saveUser({
+                UserName: loginData.user.userName,
+                UserId: loginData.user.id
+            });
+            console.log('Login successful:', loginData.user);
+            return { status: 200 };
+        } else {
+            console.error('Login failed:', loginData.message);
+            return { status: 401 };
+        }
+    } catch (error: any) {
+        console.error('Login error:', error);
+        return { status: error.response?.status || 500 };
+    }
+}
+
+export async function RegisterFunc(values: RegisterFieldType): Promise<HTTPStatus> {
+    try {
+        const response = await apiClient.post<LoginResponse>('/auth/register', {
+            userName: values.userName,
+            passWord: values.password,
+            gender: values.gender || '未知',
+            motto: '',
+            avatar: ''
+        });
+
+        const registerData = response.data;
+
+        if (registerData.success && registerData.user) {
+            storageUtils.saveUser({
+                UserName: registerData.user.userName,
+                UserId: registerData.user.id
+            });
+            console.log('Registration successful:', registerData.user);
+            return { status: 200 };
+        } else {
+            console.error('Registration failed:', registerData.message);
+            return { status: 400 };
+        }
+    } catch (error: any) {
+        console.error('Registration error:', error);
+        return { status: error.response?.status || 500 };
+    }
+}
+
+export function Logout(): void {
+    storageUtils.removeUser();
+    console.log('User logged out');
+}
+
+// ==================== 用户信息 API ====================
+
+export async function GetUserDataById(userId: number): Promise<GetUserType> {
+    try {
+        const response = await apiClient.get(`/users/${{userId}`);
+        const user = response.data;
+        return {
+            UserId: user.id,
+            LastLogintime: user.lastLoginTime || new Date().toISOString(),
+            UserName: user.userName,
+            gender: user.gender || '未知',
+            motto: user.motto || '',
+            numofShares: user.numOfShares || 0
+        };
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        return {
+            UserId: -1,
+            LastLogintime: "",
+            UserName: "",
+            gender: "",
+            motto: "",
+            numofShares: -1
+        };
+    }
+}
+
+export async function GetUserIdByUserName(userName: string): Promise<number> {
+    try {
+        const response = await apiClient.get(`/auth/user/${{userName}`);
+        return response.data?.id || 0;
+    } catch (error) {
+        console.error('Error fetching user ID:', error);
+        return 0;
+    }
+}
+
+// ==================== 综合查询 API ====================
+
+export async function GetShareAndReplies(shareId: number): Promise<ShareAndReplies> {
+    try {
+        const post = await GetPostById(shareId);
+        const replies = await GetRepliesByPostId(shareId);
+
+        const postData: Post[] = post ? [{
+            ShareId: post.id,
+            UserId: post.authorId,
+            Content: post.content,
+            Title: post.title,
+            PostTime: post.createdAt,
+            IsLocked: post.isLocked,
+            UserData: undefined
+        }] : [];
+
+        const replyData: Reply[] = replies.map((r: any, index: number) => ({
+            Content: r.content,
+            Floor: r.floor || index + 1,
+            PostTime: r.createdAt,
+            ReplyId: r.id,
+            ReplyTo: r.replyTo || 0,
+            ShareId: r.postId,
+            UserId: r.authorId,
+            UserData: undefined
+        }));
+
+        return { share: postData, replies: replyData };
+    } catch (error) {
+        console.error('Error fetching post and replies:', error);
+        return { share: [], replies: [] };
+    }
+}
+
+// ==================== 日期格式化工具函数 ====================
+
 export function formatDate(time: string | number) {
     if (time === null) {
         return ''
@@ -121,18 +233,18 @@ export function formatDate(time: string | number) {
         const date = new Date(time)
         const y = date.getFullYear()
         let m: string | number = date.getMonth() + 1
-        m = m < 10 ? `0${String(m)}` : m
+        m = m < 10 ? `0${{String(m)}` : m
         let d: string | number = date.getDate()
-        d = d < 10 ? `0${String(d)}` : d
+        d = d < 10 ? `0${{String(d)}` : d
         let h: string | number = date.getHours()
-        h = h < 10 ? `0${String(h)}` : h
+        h = h < 10 ? `0${{String(h)}` : h
         let minute: string | number = date.getMinutes()
-        minute = minute < 10 ? `0${String(minute)}` : minute
+        minute = minute < 10 ? `0${{String(minute)}` : minute
         let second: string | number = date.getSeconds()
-        second = second < 10 ? `0${String(second)}` : second
-        return `${String(y)}-${String(m)}-${String(d)}   ${String(h)}:${String(
+        second = second < 10 ? `0${{String(second)}` : second
+        return `${{String(y)}-${{String(m)}-${{String(d)}   ${{String(h)}:${{String(
             minute
-        )}:${String(second)}`
+        )}:${{String(second)}`
     }
 }
 
@@ -144,187 +256,5 @@ export function formatDatefordate(date: Date): string {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const seconds = date.getSeconds().toString().padStart(2, '0');
 
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return `${{year}-${{month}-${{day} ${{hours}:${{minutes}:${{seconds}`;
 }
-
-// export async function GetUserIdByUserName(userName: string): Promise<number> {
-//     let userId: number = 0;
-//     await axios.get(`http://${ipAddress}:8000/users/${userName}`).then(function (response) {
-//         console.log(response.data)
-//         userId = response.data
-//     })
-
-//     return userId
-// }
-
-// export async function RegisterFunc(values: RegisterFieldType): Promise<HTTPStatus> {
-//     let statusNum: number = 0;
-//     let myresponse: MyResponse | undefined;
-//     try {
-//         await axios.post(`http://${ipAddress}:8000/users/register`, {
-//             UserName: values.userName,PassWord: values.password
-//         }).then(function (response) {
-//             myresponse = response.data
-//             console.log(response);
-//             statusNum = response.status;
-//         }).catch(function (error) {
-//             console.log(error);
-//         });
-//         console.log(myresponse)
-//         if(myresponse !== undefined){
-//                 console.log("Register and Login SUCCESS")
-//                 if (myresponse.data[0].UserName !== undefined && myresponse.data[0].PassWord !== undefined)
-//                     {
-//                         storageUtils.saveUser({ UserName: myresponse.data[0].UserName, PassWord: myresponse.data[0].PassWord ,UserId:myresponse?.data[0].ID})
-//                     }
-//                 window.location.reload()
-//                 return { status: statusNum }
-            
-
-//         }
-//         else{
-//             return {status: 0}
-//         }
-
-
-//     }
-//     catch(e) {
-//         console.log(e)
-//         console.log("ERRORS BUT NOT AXIOS ERROR")
-//         return { status: statusNum }
-//     }
-// }
-
-// export async function GetUserDataById(userId: number): Promise<GetUserType> {
-
-//     let result: GetUserType = {
-//         UserId: -1,
-//         LastLogintime: "",
-//         UserName: "",
-//         gender: "",
-//         motto: "",
-//         numofShares: -1
-//     }
-
-//     if (userId === 0)
-//         return result
-//     await axios.get(`http://${ipAddress}:8000/user/${userId}`).then(function (response) {
-//         console.log(response.data)
-//         result = response.data
-//     })
-
-//     return result
-// }
-
-
-
-
-
-  
-  // Mock data
-  const mockUsers: GetUserType[] = [
-    { UserId: 1, LastLogintime: "2023-09-15T10:00:00Z", UserName: "user1", gender: "male", motto: "Hello world", numofShares: 2 },
-    { UserId: 2, LastLogintime: "2023-09-15T11:00:00Z", UserName: "user2", gender: "female", motto: "Nice to meet you", numofShares: 1 },
-  ];
-  
-  const mockPosts: Post[] = [
-    { ShareId: 1, UserId: 1, Content: "First post content", Title: "First Post", PostTime: "2023-09-15T12:00:00Z", IsLocked: false, UserData: mockUsers[0] },
-    { ShareId: 2, UserId: 2, Content: "Second post content", Title: "Second Post", PostTime: "2023-09-15T13:00:00Z", IsLocked: false, UserData: mockUsers[1] },
-  ];
-  
-  const mockReplies: Reply[] = [
-    { Content: "First reply", Floor: 1, PostTime: "2023-09-15T14:00:00Z", ReplyId: 1, ReplyTo: 0, ShareId: 1, UserId: 2, UserData: mockUsers[1] },
-    { Content: "Second reply", Floor: 2, PostTime: "2023-09-15T15:00:00Z", ReplyId: 2, ReplyTo: 1, ShareId: 1, UserId: 1, UserData: mockUsers[0] },
-  ];
-  
-  // Mock functions
-  export async function MakePost(post: PostRequest): Promise<HTTPStatus> {
-    const newPost: Post = {
-      ShareId: mockPosts.length + 1,
-      UserId: post.AuthorId,
-      Content: post.Content,
-      Title: post.Title,
-      PostTime: new Date().toISOString(),
-      IsLocked: false,
-      UserData: mockUsers.find(u => u.UserId === post.AuthorId)
-    };
-    mockPosts.push(newPost);
-    return { status: 200 };
-  }
-  
-  export async function MakeReply(reply: ReplyRequest): Promise<HTTPStatus> {
-    const newReply: Reply = {
-      Content: reply.Content,
-      Floor: mockReplies.filter(r => r.ShareId === reply.PostId).length + 1,
-      PostTime: new Date().toISOString(),
-      ReplyId: mockReplies.length + 1,
-      ReplyTo: reply.ReplyTo || 0,
-      ShareId: reply.PostId,
-      UserId: reply.AuthorId,
-      UserData: mockUsers.find(u => u.UserId === reply.AuthorId)
-    };
-    mockReplies.push(newReply);
-    return { status: 200 };
-  }
-  
-  export async function LoginFunc(values: FieldType): Promise<HTTPStatus> {
-    const user = mockUsers.find(u => u.UserName === values.userName);
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      return { status: 200 };
-    }
-    return { status: 401 };
-  }
-  
-  export function Logout(): void {
-    localStorage.removeItem('currentUser');
-  }
-  
-  export async function RegisterFunc(values: RegisterFieldType): Promise<HTTPStatus> {
-    if (!values.userName) {
-        return { status: 400 }; // Bad Request - username is required
-    }
-
-    if (mockUsers.some(u => u.UserName === values.userName)) {
-        return { status: 409 }; // Conflict - user already exists
-    }
-
-    const newUser: GetUserType = {
-        UserId: mockUsers.length + 1,
-        LastLogintime: new Date().toISOString(),
-        UserName: values.userName, // Now we know this is not undefined
-        gender: "Not specified",
-        motto: "New user",
-        numofShares: 0
-    };
-
-    mockUsers.push(newUser);
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-    return { status: 201 };
-}
-  
-  export async function GetUserIdByUserName(userName: string): Promise<number> {
-    const user = mockUsers.find(u => u.UserName === userName);
-    return user ? user.UserId : 0;
-  }
-  
-  export async function GetUserDataById(userId: number): Promise<GetUserType> {
-    const user = mockUsers.find(u => u.UserId === userId);
-    if (user) {
-      return { ...user, LastLogintime: new Date().toISOString() };
-    }
-    return {
-      UserId: -1,
-      LastLogintime: "",
-      UserName: "",
-      gender: "",
-      motto: "",
-      numofShares: -1
-    };
-  }
-  
-  export function GetShareAndReplies(shareId: number): ShareAndReplies {
-    const share = mockPosts.filter(p => p.ShareId === shareId);
-    const replies = mockReplies.filter(r => r.ShareId === shareId);
-    return { share, replies };
-  }
