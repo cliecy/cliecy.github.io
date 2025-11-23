@@ -1,15 +1,5 @@
-import React from 'react';
-import PostGrid from '../UI/Post/PostGrid';
-import MakePostComponent from '../UI/MakePostComponent';
+import Overlay from '../components/Overlay';
 
-const Home: React.FC = () => {
-  return (
-    <>
-      <PostGrid></PostGrid>
-    <MakePostComponent></MakePostComponent>
-    </>
-
-  );
-};
-
-export default Home;
+export default function Home() {
+    return <Overlay />;
+}
