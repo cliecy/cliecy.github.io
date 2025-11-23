@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { posts } from '../data/posts';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function BlogPost() {
     const { id } = useParams();
@@ -33,6 +34,7 @@ export default function BlogPost() {
                 </div>
                 <div style={{ lineHeight: 1.8, fontSize: '1.1rem', color: '#ddd' }}>
                     <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
                         urlTransform={(value) => value}
                         components={{
                             img: ({ node, ...props }) => (
@@ -41,6 +43,56 @@ export default function BlogPost() {
                                     style={{ maxWidth: '100%', height: 'auto', borderRadius: '0.5rem', margin: '1rem 0' }}
                                     alt={props.alt || ''}
                                 />
+                            ),
+                            table: ({ node, ...props }) => (
+                                <table {...props} style={{
+                                    borderCollapse: 'collapse',
+                                    width: '100%',
+                                    margin: '1rem 0',
+                                    border: '1px solid rgba(255,255,255,0.2)'
+                                }} />
+                            ),
+                            th: ({ node, ...props }) => (
+                                <th {...props} style={{
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    padding: '0.75rem',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    textAlign: 'left',
+                                    fontWeight: 'bold'
+                                }} />
+                            ),
+                            td: ({ node, ...props }) => (
+                                <td {...props} style={{
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    padding: '0.75rem'
+                                }} />
+                            ),
+                            strong: ({ node, ...props }) => (
+                                <strong {...props} style={{ fontWeight: 'bold', color: '#fff' }} />
+                            ),
+                            em: ({ node, ...props }) => (
+                                <em {...props} style={{ fontStyle: 'italic' }} />
+                            ),
+                            code: ({ node, className, children, ...props }: any) => {
+                                const inline = !className;
+                                return inline ?
+                                    <code {...props} style={{
+                                        background: 'rgba(255,255,255,0.1)',
+                                        padding: '0.2rem 0.4rem',
+                                        borderRadius: '0.25rem',
+                                        fontSize: '0.9em',
+                                        fontFamily: 'monospace'
+                                    }}>{children}</code> :
+                                    <code {...props} className={className} style={{ fontFamily: 'monospace' }}>{children}</code>
+                            },
+                            blockquote: ({ node, ...props }) => (
+                                <blockquote {...props} style={{
+                                    borderLeft: '4px solid #ff0055',
+                                    paddingLeft: '1rem',
+                                    margin: '1rem 0',
+                                    fontStyle: 'italic',
+                                    color: '#aaa'
+                                }} />
                             ),
                         }}
                     >

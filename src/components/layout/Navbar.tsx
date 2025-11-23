@@ -5,6 +5,7 @@ const links = [
     { path: '/', label: 'Home' },
     { path: '/blog', label: 'Blog' },
     { path: '/gallery', label: 'Gallery' },
+    { path: '/admin', label: 'Admin' },
 ];
 
 export default function Navbar() {

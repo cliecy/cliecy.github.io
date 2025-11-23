@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { posts, Post } from '../data/posts';
 import { motion } from 'framer-motion';
 import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
 
 export default function Admin() {
     const [id, setId] = useState('');
@@ -140,12 +142,16 @@ export const posts: Post[] = ${JSON.stringify(updatedPosts, null, 2)};
                     style={inputStyle}
                 />
 
-                <div data-color-mode="dark" onPaste={handlePaste}>
+                <div data-color-mode="dark" onPaste={handlePaste} style={{
+                    background: '#0d1117',
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    border: '1px solid rgba(255,255,255,0.2)'
+                }}>
                     <MDEditor
                         value={content}
                         onChange={(val) => setContent(val || '')}
                         height={400}
-                        style={{ background: 'transparent' }}
                     />
                 </div>
 
