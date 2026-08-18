@@ -1,0 +1,109 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/newsreader';
+
+import { navigationItems, publishedOnly } from '../lib/content';
+import { getProjects } from '../lib/projects';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description: string;
+  lang?: 'en' | 'ja' | 'zh-CN';
+  image?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  structuredData?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description,
+  lang = 'en',
+  image = '/images/og-default.png',
+  ogType = 'website',
+  noindex = false,
+  structuredData,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — CLIECY` : 'CLIECY — Developer & Creator';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shareImage = new URL(image, Astro.site);
+const usesDefaultShareImage = image === '/images/og-default.png';
+const projects = await getProjects();
+const navigation = navigationItems(publishedOnly(projects).length > 0);
+const currentPath = Astro.url.pathname;
+
+const isCurrent = (href: string) => {
+  if (href === '/') return currentPath === '/';
+  return href.startsWith('/') && currentPath.startsWith(href);
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="CLIECY Writing" href="/rss.xml" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="CLIECY" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    {usesDefaultShareImage && <meta property="og:image:width" content="1200" />}
+    {usesDefaultShareImage && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
+
+    {structuredData && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    )}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <div class="site-header__inner container">
+        <a class="wordmark" href="/" aria-label="CLIECY home">CLIECY<span aria-hidden="true">.</span></a>
+        <nav aria-label="Primary navigation">
+          <ul class="site-nav">
+            {navigation.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noreferrer' : undefined}
+                >
+                  {item.label}
+                  {item.external && <span class="external-mark" aria-hidden="true">↗</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <p>© {new Date().getFullYear()} CLIECY</p>
+        <a href="https://github.com/cliecy" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+    </footer>
+  </body>
+</html>

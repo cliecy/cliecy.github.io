@@ -1,0 +1,40 @@
+---
+import ProjectCard from '../../components/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { visibleEntries } from '../../lib/content';
+import { getProjects } from '../../lib/projects';
+
+const projects = visibleEntries(await getProjects(), import.meta.env.DEV).sort(
+  (left, right) => left.data.order - right.data.order,
+);
+---
+
+<BaseLayout title="Projects" description="Selected projects by CLIECY.">
+  <div class="container">
+    <header class="page-header">
+      <p class="eyebrow">Selected work</p>
+      <h1>Projects</h1>
+      <p class="page-header__description">Experiments and tools shaped by curiosity, utility, and careful craft.</p>
+    </header>
+
+    {projects.length > 0 ? (
+      <div class="card-grid projects-grid">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </div>
+    ) : (
+      <div class="empty-state"><p>Projects are being prepared.</p></div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 720px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

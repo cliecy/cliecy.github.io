@@ -1,11 +1,19 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "jsx": "react-jsx",
-    },
+  "extends": "astro/tsconfigs/strictest",
+  "include": [
+    ".astro/types.d.ts",
+    "astro.config.ts",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    "scripts/**/*",
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true
+  }
 }

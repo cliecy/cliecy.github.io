@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+
+import PostCard from '../../../components/PostCard.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import {
+  collectLanguages,
+  languageLabels,
+  publishedOnly,
+  sortByNewest,
+  type BlogLanguage,
+} from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return collectLanguages(posts).map((language) => ({
+    params: { lang: language.toLowerCase() },
+    props: { language },
+  }));
+}
+
+const { language } = Astro.props as { language: BlogLanguage };
+const posts = sortByNewest(
+  publishedOnly(await getCollection('blog')).filter((post) => post.data.lang === language),
+);
+const label = languageLabels[language];
+---
+
+<BaseLayout title={`${label} Writing`} description={`${label} writing by CLIECY.`}>
+  <div class="container">
+    <header class="page-header">
+      <p class="eyebrow">Language</p>
+      <h1>{label}</h1>
+      <p class="page-header__description">Published writing in {label}.</p>
+    </header>
+    <ul class="filter-list"><li><a href="/blog/">← All writing</a></li></ul>
+    <div class="card-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</BaseLayout>

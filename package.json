@@ -1,64 +1,48 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "cliecy-portfolio",
+  "version": "1.0.0",
   "private": true,
-  "homepage": "https://cliecy.github.io",
-  "dependencies": {
-    "@react-three/drei": "^9.122.0",
-    "@react-three/fiber": "^8.18.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^29.5.13",
-    "@types/node": "^22.5.5",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-    "@types/three": "^0.181.0",
-    "@uiw/react-md-editor": "^4.0.8",
-    "framer-motion": "^12.23.24",
-    "my-app": "file:",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-markdown": "^10.1.0",
-    "react-router-dom": "^6.26.2",
-    "react-scripts": "^5.0.1",
-    "react-use": "^17.6.0",
-    "remark-gfm": "^4.0.1",
-    "three": "^0.181.2",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+  "type": "module",
+  "engines": {
+    "node": "24.x"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "generate:og": "node scripts/generate-og-image.mjs",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check --minimumFailingSeverity warning",
+    "validate:content": "node scripts/validate-content.ts",
+    "test:unit": "vitest run",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:run": "playwright test",
+    "build": "npm run validate:content && npm run check && npm run test:unit && ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "postbuild": "node scripts/optimize-dist-images.mjs",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@astrojs/react": "^6.0.2",
+    "@astrojs/markdown-remark": "^7.2.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "astro": "^7.2.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "three": "^0.185.1"
   },
   "devDependencies": {
-    "@babel/types": "^7.25.6",
-    "@types/babel__core": "^7.20.5",
-    "@types/babel__generator": "^7.6.8",
-    "@types/eslint": "^9.6.1",
-    "gh-pages": "^6.1.1"
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.185.0",
+    "gray-matter": "^4.0.3",
+    "sharp": "^0.35.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }
