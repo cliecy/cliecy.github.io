@@ -5,15 +5,7 @@ pubDate: 2025-12-06
 draft: false
 lang: ja
 ---
-![image](https://azarashi-soft.nexton-net.jp/amakano2/images/top/header_visual.jpg)
-![](https://raw.githubusercontent.com/cliecy/ImageRepository/main/image_1763900936618.jpg)
-![](https://raw.githubusercontent.com/cliecy/ImageRepository/main/507_e_yuu07LN_13.webp)
-![](https://raw.githubusercontent.com/cliecy/ImageRepository/main/490_e_yuu05LN_11.webp)
-![](https://raw.githubusercontent.com/cliecy/ImageRepository/main/495_e_yuu06LN_11.webp)
-![](https://raw.githubusercontent.com/cliecy/ImageRepository/main/463_e_yuu01LN_16.webp)
-![](https://raw.githubusercontent.com/cliecy/ImageRepository/main/475_e_yuu03LN_11.webp)
 
----
 
 ## Ⅰ. 根源的な心理メカニズム：拒絶と自己否定
 
