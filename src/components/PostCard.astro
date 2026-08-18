@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+import { entrySlug, languageLabels, readingTimeMinutes } from '../lib/content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const slug = entrySlug(post.id);
+const minutes = readingTimeMinutes(post.body ?? '');
+---
+
+<article class="content-card post-card">
+  <div class="content-card__meta">
+    <time datetime={post.data.pubDate.toISOString()}>
+      {post.data.pubDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'UTC',
+      })}
+    </time>
+    <span aria-hidden="true">·</span>
+    <span>{minutes} min read</span>
+    <span aria-hidden="true">·</span>
+    <span>{languageLabels[post.data.lang]}</span>
+    {post.data.draft && <span class="draft-badge">Draft</span>}
+  </div>
+  <h2><a href={`/blog/${slug}/`}>{post.data.title}</a></h2>
+  {post.data.description && <p>{post.data.description}</p>}
+  {post.data.tags.length > 0 && (
+    <ul class="tag-list" aria-label="Tags">
+      {post.data.tags.map((tag) => <li><span>{tag}</span></li>)}
+    </ul>
+  )}
+</article>

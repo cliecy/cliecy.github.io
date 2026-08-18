@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+
+import PostCard from '../../components/PostCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  collectLanguages,
+  collectTags,
+  languageLabels,
+  sortByNewest,
+  visibleEntries,
+} from '../../lib/content';
+
+const allPosts = await getCollection('blog');
+const posts = sortByNewest(visibleEntries(allPosts, import.meta.env.DEV));
+const languages = collectLanguages(allPosts);
+const tags = collectTags(allPosts);
+---
+
+<BaseLayout title="Writing" description="Notes and essays from CLIECY across code, design, and the evolving web.">
+  <div class="container">
+    <header class="page-header">
+      <p class="eyebrow">Journal</p>
+      <h1>Writing</h1>
+      <p class="page-header__description">Notes on building, learning, and the details that make digital work feel alive.</p>
+    </header>
+
+    {(languages.length > 0 || tags.length > 0) && (
+      <nav class="writing-filters" aria-label="Filter writing">
+        {languages.length > 0 && (
+          <div>
+            <p>Languages</p>
+            <ul class="filter-list">
+              {languages.map((language) => (
+                <li><a href={`/blog/lang/${language.toLowerCase()}/`}>{languageLabels[language]}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {tags.length > 0 && (
+          <div>
+            <p>Tags</p>
+            <ul class="filter-list">
+              {tags.map((tag) => (
+                <li><a href={`/blog/tag/${tag.slug}/`}>{tag.label} <span>{tag.count}</span></a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </nav>
+    )}
+
+    {posts.length > 0 ? (
+      <div class="card-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    ) : (
+      <div class="empty-state"><p>Writing is being prepared.</p></div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .writing-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .writing-filters p {
+    margin: 0 0 0.65rem;
+    color: var(--faint);
+    font-size: 0.72rem;
+    font-weight: 720;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .writing-filters .filter-list {
+    margin-bottom: 0;
+  }
+
+  .writing-filters span {
+    margin-left: 0.35rem;
+    color: var(--faint);
+  }
+
+  @media (max-width: 650px) {
+    .writing-filters {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+</style>

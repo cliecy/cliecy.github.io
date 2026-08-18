@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+
+import PostCard from '../../../components/PostCard.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { collectTags, publishedOnly, sortByNewest, tagSlug } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return collectTags(posts).map((tag) => ({
+    params: { tag: tag.slug },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const posts = sortByNewest(
+  publishedOnly(await getCollection('blog')).filter((post) =>
+    post.data.tags.some((label) => tagSlug(label) === tag.slug),
+  ),
+);
+---
+
+<BaseLayout title={`#${tag.label}`} description={`Writing tagged ${tag.label} by CLIECY.`}>
+  <div class="container">
+    <header class="page-header">
+      <p class="eyebrow">Tag</p>
+      <h1>#{tag.label}</h1>
+      <p class="page-header__description">{tag.count} published {tag.count === 1 ? 'entry' : 'entries'}.</p>
+    </header>
+    <ul class="filter-list"><li><a href="/blog/">← All writing</a></li></ul>
+    <div class="card-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</BaseLayout>

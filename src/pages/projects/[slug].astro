@@ -1,0 +1,84 @@
+---
+import { render } from 'astro:content';
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { entrySlug, visibleEntries } from '../../lib/content';
+import { getProjects } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return visibleEntries(projects, import.meta.env.DEV).map((project) => ({
+    params: { slug: entrySlug(project.id) },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const slug = entrySlug(project.id);
+const canonical = new URL(`/projects/${slug}/`, Astro.site);
+const layoutImage = project.data.image ? { image: project.data.image } : {};
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.data.title,
+  description: project.data.description,
+  url: canonical.href,
+  ...(project.data.image && { image: new URL(project.data.image, Astro.site).href }),
+  ...(project.data.repositoryUrl && { codeRepository: project.data.repositoryUrl }),
+};
+---
+
+<BaseLayout
+  title={project.data.title}
+  description={project.data.description}
+  {...layoutImage}
+  noindex={project.data.draft}
+  structuredData={structuredData}
+>
+  <article>
+    <header class="article-shell article-header">
+      <div class="article-meta">
+        <span>Project</span>
+        {project.data.draft && <span class="draft-badge">Draft</span>}
+      </div>
+      <h1>{project.data.title}</h1>
+      <p class="article-header__description">{project.data.description}</p>
+      {project.data.tags.length > 0 && (
+        <ul class="tag-list" aria-label="Technologies">
+          {project.data.tags.map((tag) => <li><span>{tag}</span></li>)}
+        </ul>
+      )}
+      {(project.data.repositoryUrl || project.data.demoUrl) && (
+        <nav class="project-links" aria-label="Project links">
+          {project.data.repositoryUrl && <a href={project.data.repositoryUrl} target="_blank" rel="noreferrer">Repository ↗</a>}
+          {project.data.demoUrl && <a href={project.data.demoUrl} target="_blank" rel="noreferrer">Live demo ↗</a>}
+        </nav>
+      )}
+    </header>
+
+    {project.data.image && (
+      <img class="article-cover" src={project.data.image} alt="" loading="eager" decoding="async" fetchpriority="high" />
+    )}
+
+    <div class="article-shell prose">
+      <Content />
+      <footer class="article-footer"><a href="/projects/">← All projects</a></footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .project-links a {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+</style>

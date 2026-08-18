@@ -1,0 +1,215 @@
+media:
+  - name: blog_images
+    label: Blog images
+    input: public/images/blog
+    output: /images/blog
+    extensions: [jpg, jpeg, png, webp, avif]
+    categories: [image]
+    rename: safe
+  - name: project_images
+    label: Project images
+    input: public/images/projects
+    output: /images/projects
+    extensions: [jpg, jpeg, png, webp, avif]
+    categories: [image]
+    rename: safe
+
+content:
+  - name: posts
+    label: Posts
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    subfolders: false
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [title, pubDate, draft, lang]
+      primary: title
+      sort: [pubDate, title]
+      search: [title, description, tags]
+      default:
+        sort: pubDate
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Summary
+        type: text
+        description: Required before publishing.
+      - name: pubDate
+        label: Publish date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: updatedDate
+        label: Updated date
+        type: date
+        default: ""
+        options:
+          format: yyyy-MM-dd
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+        required: true
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        default: []
+      - name: lang
+        label: Language
+        type: select
+        default: en
+        required: true
+        options:
+          values:
+            - name: en
+              label: English
+            - name: ja
+              label: 日本語
+            - name: zh-CN
+              label: 简体中文
+      - name: cover
+        label: Cover image
+        type: image
+        options:
+          media: blog_images
+          extensions: [jpg, jpeg, png, webp, avif]
+          rename: safe
+      - name: body
+        label: Body
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+          switcher: true
+          media: blog_images
+          extensions: [jpg, jpeg, png, webp, avif]
+          rename: safe
+
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    subfolders: false
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [title, draft, featured, order]
+      primary: title
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: text
+        required: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+        required: true
+      - name: featured
+        label: Featured
+        type: boolean
+        default: false
+        required: true
+      - name: order
+        label: Order
+        type: number
+        default: 0
+        required: true
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        default: []
+      - name: image
+        label: Image
+        type: image
+        options:
+          media: project_images
+          extensions: [jpg, jpeg, png, webp, avif]
+          rename: safe
+      - name: repositoryUrl
+        label: Repository URL
+        type: string
+      - name: demoUrl
+        label: Demo URL
+        type: string
+      - name: body
+        label: Details
+        type: rich-text
+        options:
+          format: markdown
+          switcher: true
+          media: project_images
+          extensions: [jpg, jpeg, png, webp, avif]
+          rename: safe
+
+  - name: site_profile
+    label: Site profile
+    type: file
+    path: src/content/site/profile.md
+    format: yaml-frontmatter
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+        readonly: true
+      - name: role
+        label: Role
+        type: string
+        required: true
+        readonly: true
+      - name: introduction
+        label: Introduction
+        type: text
+        required: true
+      - name: githubUrl
+        label: GitHub URL
+        type: string
+        required: true
+        readonly: true
+      - name: seoDescription
+        label: SEO description
+        type: text
+        required: true
+
+settings:
+  content:
+    merge: true
+  commit:
+    identity: user
+    templates:
+      create: "content: create {path}"
+      update: "content: update {path}"
+      delete: "content: delete {path}"
+      rename: "content: rename {oldPath} to {newPath}"
