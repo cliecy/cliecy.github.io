@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
+import UiText from './UiText.astro';
 import { entrySlug, languageLabels, readingTimeMinutes } from '../lib/content';
 
 interface Props {
@@ -10,28 +11,35 @@ interface Props {
 const { post } = Astro.props;
 const slug = entrySlug(post.id);
 const minutes = readingTimeMinutes(post.body ?? '');
+const dateZh = post.data.pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+const dateEn = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
 ---
 
 <article class="content-card post-card">
   <div class="content-card__meta">
     <time datetime={post.data.pubDate.toISOString()}>
-      {post.data.pubDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        timeZone: 'UTC',
-      })}
+      <UiText zh={dateZh} en={dateEn} />
     </time>
     <span aria-hidden="true">·</span>
-    <span>{minutes} min read</span>
+    <span><UiText zh={`${minutes} 分钟阅读`} en={`${minutes} min read`} /></span>
     <span aria-hidden="true">·</span>
     <span>{languageLabels[post.data.lang]}</span>
-    {post.data.draft && <span class="draft-badge">Draft</span>}
+    {post.data.draft && <span class="draft-badge"><UiText zh="草稿" en="Draft" /></span>}
   </div>
   <h2><a href={`/blog/${slug}/`}>{post.data.title}</a></h2>
   {post.data.description && <p>{post.data.description}</p>}
   {post.data.tags.length > 0 && (
-    <ul class="tag-list" aria-label="Tags">
+    <ul class="tag-list" aria-label="标签" data-aria-zh="标签" data-aria-en="Tags">
       {post.data.tags.map((tag) => <li><span>{tag}</span></li>)}
     </ul>
   )}

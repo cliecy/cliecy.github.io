@@ -100,18 +100,21 @@ export function readingTimeMinutes(markdown: string): number {
 }
 
 export interface NavigationItem {
-  label: string;
+  labelZh: string;
+  labelEn: string;
   href: string;
   external?: boolean;
 }
 
 export function navigationItems(hasPublicProjects: boolean): NavigationItem[] {
   const items: NavigationItem[] = [
-    { label: 'Home', href: '/' },
-    { label: 'Writing', href: '/blog/' },
+    { labelZh: '首页', labelEn: 'Home', href: '/' },
+    { labelZh: '文章', labelEn: 'Writing', href: '/blog/' },
   ];
 
-  if (hasPublicProjects) items.push({ label: 'Projects', href: '/projects/' });
-  items.push({ label: 'GitHub', href: 'https://github.com/cliecy', external: true });
+  if (hasPublicProjects) {
+    items.push({ labelZh: '项目', labelEn: 'Projects', href: '/projects/' });
+  }
+  items.push({ labelZh: 'GitHub', labelEn: 'GitHub', href: 'https://github.com/cliecy', external: true });
   return items;
 }

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 
+import UiText from '../../components/UiText.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { entrySlug, languageLabels, readingTimeMinutes, visibleEntries } from '../../lib/content';
 
@@ -19,6 +20,18 @@ const canonical = new URL(`/blog/${slug}/`, Astro.site);
 const minutes = readingTimeMinutes(post.body ?? '');
 const description = post.data.description ?? post.data.title;
 const image = post.data.cover ? new URL(post.data.cover, Astro.site).href : new URL('/images/og-default.png', Astro.site).href;
+const dateZh = post.data.pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+const dateEn = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -50,23 +63,18 @@ const structuredData = {
     <header class="article-shell article-header">
       <div class="article-meta">
         <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            timeZone: 'UTC',
-          })}
+          <UiText zh={dateZh} en={dateEn} />
         </time>
         <span aria-hidden="true">·</span>
-        <span>{minutes} min read</span>
+        <span><UiText zh={`${minutes} 分钟阅读`} en={`${minutes} min read`} /></span>
         <span aria-hidden="true">·</span>
         <span>{languageLabels[post.data.lang]}</span>
-        {post.data.draft && <span class="draft-badge">Draft</span>}
+        {post.data.draft && <span class="draft-badge"><UiText zh="草稿" en="Draft" /></span>}
       </div>
       <h1>{post.data.title}</h1>
       <p class="article-header__description">{description}</p>
       {post.data.tags.length > 0 && (
-        <ul class="tag-list" aria-label="Tags">
+        <ul class="tag-list" aria-label="标签" data-aria-zh="标签" data-aria-en="Tags">
           {post.data.tags.map((tag) => <li><span>{tag}</span></li>)}
         </ul>
       )}
@@ -79,7 +87,7 @@ const structuredData = {
     <div class="article-shell prose">
       <Content />
       <footer class="article-footer">
-        <a href="/blog/">← All writing</a>
+        <a href="/blog/">← <UiText zh="全部文章" en="All writing" /></a>
         <a href="https://github.com/cliecy" target="_blank" rel="noreferrer">GitHub ↗</a>
       </footer>
     </div>

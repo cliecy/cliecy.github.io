@@ -99,14 +99,15 @@ describe('reading time', () => {
 
 describe('conditional navigation', () => {
   it('hides Projects when there are no public projects', () => {
-    expect(navigationItems(false).map((item) => item.label)).toEqual([
-      'Home',
-      'Writing',
+    expect(navigationItems(false).map((item) => item.labelZh)).toEqual([
+      '首页',
+      '文章',
       'GitHub',
     ]);
   });
 
   it('adds Projects when public work exists', () => {
-    expect(navigationItems(true).map((item) => item.label)).toContain('Projects');
+    const projects = navigationItems(true).find((item) => item.href === '/projects/');
+    expect(projects).toMatchObject({ labelZh: '项目', labelEn: 'Projects' });
   });
 });

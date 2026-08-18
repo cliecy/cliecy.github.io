@@ -190,7 +190,11 @@ content:
         required: true
         readonly: true
       - name: introduction
-        label: Introduction
+        label: 中文介绍
+        type: text
+        required: true
+      - name: introductionEn
+        label: English introduction
         type: text
         required: true
       - name: githubUrl
@@ -199,7 +203,11 @@ content:
         required: true
         readonly: true
       - name: seoDescription
-        label: SEO description
+        label: 中文 SEO 描述
+        type: text
+        required: true
+      - name: seoDescriptionEn
+        label: English SEO description
         type: text
         required: true
 

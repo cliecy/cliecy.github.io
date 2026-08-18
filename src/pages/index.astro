@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 
-import HeroScene from '../components/hero/HeroScene';
 import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import UiText from '../components/UiText.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { publishedOnly, sortByNewest, visibleEntries } from '../lib/content';
 import { getProjects } from '../lib/projects';
@@ -20,44 +20,27 @@ const featuredProjects = publishedOnly(allProjects)
   .sort((left, right) => left.data.order - right.data.order);
 ---
 
-<BaseLayout description={profile.data.seoDescription}>
+<BaseLayout
+  description={profile.data.seoDescription}
+  descriptionEn={profile.data.seoDescriptionEn}
+>
   <section class="hero container" aria-labelledby="hero-title">
-    <div class="hero__copy">
-      <p class="eyebrow">Developer &amp; Creator</p>
-      <h1 id="hero-title">Ideas, made <span>tangible.</span></h1>
-      <p class="hero__introduction">{profile.data.introduction}</p>
-      <div class="hero__actions">
-        <a class="button button--primary" href="/blog/">Read the writing <span aria-hidden="true">→</span></a>
-        <a class="button button--quiet" href={profile.data.githubUrl} target="_blank" rel="noreferrer">View GitHub <span aria-hidden="true">↗</span></a>
-      </div>
-    </div>
-    <div class="hero__visual" aria-hidden="true">
-      <div class="hero__orbit hero__orbit--one"></div>
-      <div class="hero__orbit hero__orbit--two"></div>
-      <HeroScene client:media="(min-width: 768px) and (prefers-reduced-motion: no-preference)" />
-    </div>
-  </section>
-
-  <section class="about container" aria-labelledby="about-title">
-    <p class="about__index" aria-hidden="true">01</p>
-    <div>
-      <p class="eyebrow">About</p>
-      <h2 id="about-title">Thoughtful systems with a creative edge.</h2>
-    </div>
-    <div class="about__copy">
-      <p>{profile.data.introduction}</p>
-      <p>This site is a quiet workspace for projects, experiments, and notes across English, Japanese, and Chinese.</p>
+    <p class="eyebrow"><UiText zh="开发与创作" en="Developer & Creator" /></p>
+    <h1 id="hero-title"><UiText zh="你好，我是 CLIECY。" en="Hi, I'm CLIECY." /></h1>
+    <p class="hero__introduction">
+      <UiText zh={profile.data.introduction} en={profile.data.introductionEn} />
+    </p>
+    <div class="hero__actions">
+      <a class="button button--primary" href="/blog/"><UiText zh="阅读文章" en="Read the writing" /> <span aria-hidden="true">→</span></a>
+      <a class="button" href={profile.data.githubUrl} target="_blank" rel="noreferrer"><UiText zh="查看 GitHub" en="View GitHub" /> <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 
   {latestPosts.length > 0 && (
     <section class="home-section container" aria-labelledby="writing-title">
       <div class="section-heading">
-        <div>
-          <p class="eyebrow">Latest</p>
-          <h2 id="writing-title">Writing</h2>
-        </div>
-        <a href="/blog/">View all writing <span aria-hidden="true">→</span></a>
+        <h2 id="writing-title"><UiText zh="最近文章" en="Latest writing" /></h2>
+        <a href="/blog/"><UiText zh="查看全部" en="View all" /> <span aria-hidden="true">→</span></a>
       </div>
       <div class="card-grid">
         {latestPosts.map((post) => <PostCard post={post} />)}
@@ -68,64 +51,38 @@ const featuredProjects = publishedOnly(allProjects)
   {featuredProjects.length > 0 && (
     <section class="home-section container" aria-labelledby="projects-title">
       <div class="section-heading">
-        <div>
-          <p class="eyebrow">Selected</p>
-          <h2 id="projects-title">Projects</h2>
-        </div>
-        <a href="/projects/">View all projects <span aria-hidden="true">→</span></a>
+        <h2 id="projects-title"><UiText zh="精选项目" en="Selected projects" /></h2>
+        <a href="/projects/"><UiText zh="查看全部" en="View all" /> <span aria-hidden="true">→</span></a>
       </div>
       <div class="card-grid card-grid--projects">
         {featuredProjects.map((project) => <ProjectCard project={project} />)}
       </div>
     </section>
   )}
-
-  <section class="github-callout container" aria-labelledby="github-title">
-    <div>
-      <p class="eyebrow">Elsewhere</p>
-      <h2 id="github-title">Follow the work in progress.</h2>
-    </div>
-    <a href={profile.data.githubUrl} target="_blank" rel="noreferrer" aria-label="Visit CLIECY on GitHub">
-      GitHub <span aria-hidden="true">↗</span>
-    </a>
-  </section>
 </BaseLayout>
 
 <style>
   .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(21rem, 0.95fr);
-    align-items: center;
-    gap: clamp(2rem, 5vw, 5rem);
-    min-height: min(49rem, calc(100vh - 4.75rem));
-    padding-block: clamp(4.5rem, 8vw, 8rem);
-  }
-
-  .hero__copy {
-    position: relative;
-    z-index: 2;
+    max-width: 880px;
+    padding-block: clamp(5rem, 13vw, 9rem);
+    border-bottom: 1px solid var(--border);
   }
 
   .hero h1 {
-    max-width: 8.5ch;
+    max-width: 12ch;
     margin: 0;
-    font-size: clamp(3.7rem, 8.4vw, 7.4rem);
-    line-height: 0.9;
-    letter-spacing: -0.075em;
-  }
-
-  .hero h1 span {
-    display: block;
-    color: transparent;
-    background: linear-gradient(115deg, var(--accent), #ff82b6 45%, var(--accent-secondary));
-    background-clip: text;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 680;
+    line-height: 1.08;
+    letter-spacing: -0.055em;
   }
 
   .hero__introduction {
-    max-width: 35rem;
-    margin: 1.7rem 0 0;
+    max-width: 39rem;
+    margin: 1.6rem 0 0;
     color: var(--muted);
     font-size: clamp(1.05rem, 2vw, 1.22rem);
+    line-height: 1.8;
   }
 
   .hero__actions {
@@ -137,213 +94,58 @@ const featuredProjects = publishedOnly(allProjects)
 
   .button {
     display: inline-flex;
-    min-height: 3rem;
+    min-height: 2.8rem;
     align-items: center;
     justify-content: center;
-    gap: 0.55rem;
-    padding-inline: 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: 0.55rem;
-    font-size: 0.88rem;
-    font-weight: 700;
+    gap: 0.45rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 0.35rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 650;
     text-decoration: none;
-    transition: transform 140ms ease, border-color 140ms ease, background-color 140ms ease;
   }
 
   .button:hover {
-    transform: translateY(-2px);
-  }
-
-  .button--primary {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: #170811;
-  }
-
-  .button--primary:hover {
-    border-color: #ff70ad;
-    background: #ff70ad;
-    color: #170811;
-  }
-
-  .button--quiet {
-    background: rgb(18 18 26 / 72%);
-  }
-
-  .hero__visual {
-    position: relative;
-    min-height: clamp(23rem, 42vw, 34rem);
-    overflow: hidden;
-    border: 1px solid rgb(255 255 255 / 7%);
-    border-radius: clamp(1.2rem, 3vw, 2rem);
-    background:
-      radial-gradient(circle at 64% 35%, rgb(255 61 141 / 30%), transparent 30%),
-      radial-gradient(circle at 34% 66%, rgb(124 92 255 / 28%), transparent 35%),
-      linear-gradient(145deg, #13121c, #09090e);
-    isolation: isolate;
-  }
-
-  .hero__visual::after {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    opacity: 0.18;
-    background-image: linear-gradient(rgb(255 255 255 / 13%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 13%) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(circle, #000, transparent 72%);
-    content: '';
-  }
-
-  .hero__orbit {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 70%;
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%) rotate(-17deg);
-    border: 1px solid rgb(255 255 255 / 12%);
-    border-radius: 50%;
-  }
-
-  .hero__orbit--two {
-    width: 45%;
-    transform: translate(-50%, -50%) rotate(42deg);
-    border-color: rgb(255 61 141 / 24%);
-  }
-
-  :global(.hero-scene-fallback),
-  :global(.hero-scene-canvas) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  :global(.hero-scene-canvas canvas) {
-    cursor: grab;
-  }
-
-  :global(.hero-scene-canvas canvas:active) {
-    cursor: grabbing;
-  }
-
-  .about {
-    display: grid;
-    grid-template-columns: 5rem minmax(0, 1fr) minmax(18rem, 0.85fr);
-    gap: clamp(1.5rem, 5vw, 5rem);
-    padding-block: clamp(4.5rem, 10vw, 8rem);
-    border-top: 1px solid var(--border);
-  }
-
-  .about__index {
-    margin: 0;
-    color: var(--faint);
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-  }
-
-  .about h2 {
-    max-width: 13ch;
-    margin: 0;
-    font-size: clamp(2rem, 5vw, 3.7rem);
-    line-height: 1.03;
-    letter-spacing: -0.05em;
-  }
-
-  .about__copy {
-    color: var(--muted);
-    font-family: 'Newsreader Variable', Georgia, serif;
-    font-size: clamp(1.1rem, 2vw, 1.28rem);
-  }
-
-  .about__copy p:first-child {
-    margin-top: 0;
+    border-color: var(--text);
     color: var(--text);
   }
 
+  .button--primary {
+    border-color: var(--text);
+    background: var(--text);
+    color: var(--background);
+  }
+
+  .button--primary:hover {
+    background: #d8d6d0;
+    color: var(--background);
+  }
+
   .home-section {
-    padding-block: clamp(4rem, 8vw, 6.5rem);
+    padding-block: clamp(4rem, 9vw, 6.5rem);
+  }
+
+  .home-section + .home-section {
+    border-top: 1px solid var(--border);
   }
 
   .card-grid--projects {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .github-callout {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-top: clamp(4rem, 9vw, 7rem);
-    padding: clamp(1.6rem, 5vw, 3.4rem);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: linear-gradient(110deg, rgb(255 61 141 / 9%), transparent 45%, rgb(124 92 255 / 10%)), var(--surface);
-  }
-
-  .github-callout h2 {
-    margin: 0;
-    font-size: clamp(1.7rem, 4vw, 3rem);
-    line-height: 1.05;
-    letter-spacing: -0.045em;
-  }
-
-  .github-callout > a {
-    display: inline-flex;
-    flex: none;
-    width: clamp(5.5rem, 11vw, 7rem);
-    aspect-ratio: 1;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    border-radius: 50%;
-    background: var(--text);
-    color: var(--background);
-    font-size: 0.85rem;
-    font-weight: 760;
-    text-decoration: none;
-    transition: transform 150ms ease, background-color 150ms ease;
-  }
-
-  .github-callout > a:hover {
-    transform: rotate(-5deg) scale(1.03);
-    background: var(--accent);
-    color: #170811;
-  }
-
-  @media (max-width: 767px) {
+  @media (max-width: 720px) {
     .hero {
-      display: block;
-      min-height: 0;
-      padding-top: 4.5rem;
+      padding-block: 4.5rem;
     }
 
     .hero h1 {
-      font-size: clamp(3.4rem, 18vw, 5.5rem);
-    }
-
-    .hero__visual {
-      min-height: 13rem;
-      margin-top: 3rem;
-    }
-
-    .about {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
-    }
-
-    .about__index {
-      display: none;
+      font-size: clamp(2.8rem, 14vw, 4.4rem);
     }
 
     .card-grid--projects {
       grid-template-columns: 1fr;
-    }
-
-    .github-callout {
-      align-items: flex-start;
-      flex-direction: column;
     }
   }
 </style>

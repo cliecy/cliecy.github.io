@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 
 import PostCard from '../../../components/PostCard.astro';
+import UiText from '../../../components/UiText.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import {
   collectLanguages,
@@ -26,14 +27,19 @@ const posts = sortByNewest(
 const label = languageLabels[language];
 ---
 
-<BaseLayout title={`${label} Writing`} description={`${label} writing by CLIECY.`}>
+<BaseLayout
+  title={`${label}文章`}
+  titleEn={`${label} writing`}
+  description={`CLIECY 使用${label}发布的文章。`}
+  descriptionEn={`${label} writing by CLIECY.`}
+>
   <div class="container">
     <header class="page-header">
-      <p class="eyebrow">Language</p>
+      <p class="eyebrow"><UiText zh="语言" en="Language" /></p>
       <h1>{label}</h1>
-      <p class="page-header__description">Published writing in {label}.</p>
+      <p class="page-header__description"><UiText zh={`使用${label}发布的文章。`} en={`Published writing in ${label}.`} /></p>
     </header>
-    <ul class="filter-list"><li><a href="/blog/">← All writing</a></li></ul>
+    <ul class="filter-list"><li><a href="/blog/">← <UiText zh="全部文章" en="All writing" /></a></li></ul>
     <div class="card-grid">
       {posts.map((post) => <PostCard post={post} />)}
     </div>

@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 
+import UiText from '../../components/UiText.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { entrySlug, visibleEntries } from '../../lib/content';
 import { getProjects } from '../../lib/projects';
@@ -39,20 +40,20 @@ const structuredData = {
   <article>
     <header class="article-shell article-header">
       <div class="article-meta">
-        <span>Project</span>
-        {project.data.draft && <span class="draft-badge">Draft</span>}
+        <span><UiText zh="项目" en="Project" /></span>
+        {project.data.draft && <span class="draft-badge"><UiText zh="草稿" en="Draft" /></span>}
       </div>
       <h1>{project.data.title}</h1>
       <p class="article-header__description">{project.data.description}</p>
       {project.data.tags.length > 0 && (
-        <ul class="tag-list" aria-label="Technologies">
+        <ul class="tag-list" aria-label="技术" data-aria-zh="技术" data-aria-en="Technologies">
           {project.data.tags.map((tag) => <li><span>{tag}</span></li>)}
         </ul>
       )}
       {(project.data.repositoryUrl || project.data.demoUrl) && (
-        <nav class="project-links" aria-label="Project links">
-          {project.data.repositoryUrl && <a href={project.data.repositoryUrl} target="_blank" rel="noreferrer">Repository ↗</a>}
-          {project.data.demoUrl && <a href={project.data.demoUrl} target="_blank" rel="noreferrer">Live demo ↗</a>}
+        <nav class="project-links" aria-label="项目链接" data-aria-zh="项目链接" data-aria-en="Project links">
+          {project.data.repositoryUrl && <a href={project.data.repositoryUrl} target="_blank" rel="noreferrer"><UiText zh="代码仓库" en="Repository" /> ↗</a>}
+          {project.data.demoUrl && <a href={project.data.demoUrl} target="_blank" rel="noreferrer"><UiText zh="在线演示" en="Live demo" /> ↗</a>}
         </nav>
       )}
     </header>
@@ -63,7 +64,7 @@ const structuredData = {
 
     <div class="article-shell prose">
       <Content />
-      <footer class="article-footer"><a href="/projects/">← All projects</a></footer>
+      <footer class="article-footer"><a href="/projects/">← <UiText zh="全部项目" en="All projects" /></a></footer>
     </div>
   </article>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 
 import PostCard from '../../components/PostCard.astro';
+import UiText from '../../components/UiText.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import {
   collectLanguages,
@@ -17,19 +18,24 @@ const languages = collectLanguages(allPosts);
 const tags = collectTags(allPosts);
 ---
 
-<BaseLayout title="Writing" description="Notes and essays from CLIECY across code, design, and the evolving web.">
+<BaseLayout
+  title="文章"
+  titleEn="Writing"
+  description="CLIECY 关于开发、设计与学习的文章和随笔。"
+  descriptionEn="Notes and essays from CLIECY about development, design, and learning."
+>
   <div class="container">
     <header class="page-header">
-      <p class="eyebrow">Journal</p>
-      <h1>Writing</h1>
-      <p class="page-header__description">Notes on building, learning, and the details that make digital work feel alive.</p>
+      <p class="eyebrow"><UiText zh="写作" en="Journal" /></p>
+      <h1><UiText zh="文章" en="Writing" /></h1>
+      <p class="page-header__description"><UiText zh="记录开发、学习，以及做项目时遇到的细节。" en="Notes on building, learning, and the details behind the work." /></p>
     </header>
 
     {(languages.length > 0 || tags.length > 0) && (
-      <nav class="writing-filters" aria-label="Filter writing">
+      <nav class="writing-filters" aria-label="筛选文章" data-aria-zh="筛选文章" data-aria-en="Filter writing">
         {languages.length > 0 && (
           <div>
-            <p>Languages</p>
+            <p><UiText zh="语言" en="Languages" /></p>
             <ul class="filter-list">
               {languages.map((language) => (
                 <li><a href={`/blog/lang/${language.toLowerCase()}/`}>{languageLabels[language]}</a></li>
@@ -39,7 +45,7 @@ const tags = collectTags(allPosts);
         )}
         {tags.length > 0 && (
           <div>
-            <p>Tags</p>
+            <p><UiText zh="标签" en="Tags" /></p>
             <ul class="filter-list">
               {tags.map((tag) => (
                 <li><a href={`/blog/tag/${tag.slug}/`}>{tag.label} <span>{tag.count}</span></a></li>
@@ -55,7 +61,7 @@ const tags = collectTags(allPosts);
         {posts.map((post) => <PostCard post={post} />)}
       </div>
     ) : (
-      <div class="empty-state"><p>Writing is being prepared.</p></div>
+      <div class="empty-state"><p><UiText zh="文章正在准备中。" en="Writing is being prepared." /></p></div>
     )}
   </div>
 </BaseLayout>

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 
 import PostCard from '../../../components/PostCard.astro';
+import UiText from '../../../components/UiText.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { collectTags, publishedOnly, sortByNewest, tagSlug } from '../../../lib/content';
 
@@ -21,14 +22,18 @@ const posts = sortByNewest(
 );
 ---
 
-<BaseLayout title={`#${tag.label}`} description={`Writing tagged ${tag.label} by CLIECY.`}>
+<BaseLayout
+  title={`#${tag.label}`}
+  description={`CLIECY 标记为 ${tag.label} 的文章。`}
+  descriptionEn={`Writing tagged ${tag.label} by CLIECY.`}
+>
   <div class="container">
     <header class="page-header">
-      <p class="eyebrow">Tag</p>
+      <p class="eyebrow"><UiText zh="标签" en="Tag" /></p>
       <h1>#{tag.label}</h1>
-      <p class="page-header__description">{tag.count} published {tag.count === 1 ? 'entry' : 'entries'}.</p>
+      <p class="page-header__description"><UiText zh={`${tag.count} 篇已发布文章。`} en={`${tag.count} published ${tag.count === 1 ? 'entry' : 'entries'}.`} /></p>
     </header>
-    <ul class="filter-list"><li><a href="/blog/">← All writing</a></li></ul>
+    <ul class="filter-list"><li><a href="/blog/">← <UiText zh="全部文章" en="All writing" /></a></li></ul>
     <div class="card-grid">
       {posts.map((post) => <PostCard post={post} />)}
     </div>

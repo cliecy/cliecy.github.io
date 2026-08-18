@@ -2,13 +2,16 @@
 import '@fontsource-variable/inter';
 import '@fontsource-variable/newsreader';
 
+import UiText from '../components/UiText.astro';
 import { navigationItems, publishedOnly } from '../lib/content';
 import { getProjects } from '../lib/projects';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   lang?: 'en' | 'ja' | 'zh-CN';
   image?: string;
   ogType?: 'website' | 'article';
@@ -18,15 +21,22 @@ interface Props {
 
 const {
   title,
+  titleEn,
   description,
-  lang = 'en',
+  descriptionEn = description,
+  lang,
   image = '/images/og-default.png',
   ogType = 'website',
   noindex = false,
   structuredData,
 } = Astro.props;
 
-const pageTitle = title ? `${title} — CLIECY` : 'CLIECY — Developer & Creator';
+const pageTitle = title ? `${title} — CLIECY` : 'CLIECY — 开发者与创作者';
+const pageTitleEn = titleEn
+  ? `${titleEn} — CLIECY`
+  : title
+    ? pageTitle
+    : 'CLIECY — Developer & Creator';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const shareImage = new URL(image, Astro.site);
 const usesDefaultShareImage = image === '/images/og-default.png';
@@ -41,7 +51,15 @@ const isCurrent = (href: string) => {
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html
+  lang={lang ?? 'zh-CN'}
+  data-ui-lang="zh"
+  data-content-lang={lang ? 'locked' : 'ui'}
+  data-page-title-zh={pageTitle}
+  data-page-title-en={pageTitleEn}
+  data-page-description-zh={description}
+  data-page-description-en={descriptionEn}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,7 +68,7 @@ const isCurrent = (href: string) => {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title="CLIECY Writing" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="CLIECY 文章" href="/rss.xml" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:type" content={ogType} />
@@ -69,29 +87,50 @@ const isCurrent = (href: string) => {
     {structuredData && (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     )}
+    <script is:inline>
+      (() => {
+        try {
+          if (localStorage.getItem('cliecy-ui-language') === 'en') {
+            document.documentElement.dataset.uiLang = 'en';
+          }
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
-    <a class="skip-link" href="#main-content">Skip to content</a>
+    <a class="skip-link" href="#main-content"><UiText zh="跳到正文" en="Skip to content" /></a>
     <header class="site-header">
       <div class="site-header__inner container">
-        <a class="wordmark" href="/" aria-label="CLIECY home">CLIECY<span aria-hidden="true">.</span></a>
-        <nav aria-label="Primary navigation">
-          <ul class="site-nav">
-            {navigation.map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  aria-current={isCurrent(item.href) ? 'page' : undefined}
-                  target={item.external ? '_blank' : undefined}
-                  rel={item.external ? 'noreferrer' : undefined}
-                >
-                  {item.label}
-                  {item.external && <span class="external-mark" aria-hidden="true">↗</span>}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <a class="wordmark" href="/" aria-label="CLIECY 首页" data-aria-zh="CLIECY 首页" data-aria-en="CLIECY home">CLIECY</a>
+        <div class="header-actions">
+          <nav aria-label="主导航" data-aria-zh="主导航" data-aria-en="Primary navigation">
+            <ul class="site-nav">
+              {navigation.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    aria-current={isCurrent(item.href) ? 'page' : undefined}
+                    target={item.external ? '_blank' : undefined}
+                    rel={item.external ? 'noreferrer' : undefined}
+                  >
+                    <UiText zh={item.labelZh} en={item.labelEn} />
+                    {item.external && <span class="external-mark" aria-hidden="true">↗</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <button
+            class="language-toggle"
+            type="button"
+            data-language-toggle
+            aria-label="Switch to English"
+            aria-pressed="false"
+          >
+            <span class="ui-copy ui-copy--zh" lang="en">EN</span>
+            <span class="ui-copy ui-copy--en" lang="zh-CN">中文</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -105,5 +144,54 @@ const isCurrent = (href: string) => {
         <a href="https://github.com/cliecy" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
       </div>
     </footer>
+
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const toggle = document.querySelector('[data-language-toggle]');
+        const description = document.querySelector('meta[name="description"]');
+
+        const applyLanguage = (language, persist = false) => {
+          root.dataset.uiLang = language;
+          if (root.dataset.contentLang === 'ui') {
+            root.lang = language === 'en' ? 'en' : 'zh-CN';
+          }
+
+          document.title = language === 'en'
+            ? root.dataset.pageTitleEn
+            : root.dataset.pageTitleZh;
+          description?.setAttribute(
+            'content',
+            language === 'en'
+              ? root.dataset.pageDescriptionEn
+              : root.dataset.pageDescriptionZh,
+          );
+
+          document.querySelectorAll('[data-aria-zh][data-aria-en]').forEach((element) => {
+            element.setAttribute(
+              'aria-label',
+              language === 'en' ? element.dataset.ariaEn : element.dataset.ariaZh,
+            );
+          });
+
+          toggle?.setAttribute('aria-pressed', language === 'en' ? 'true' : 'false');
+          toggle?.setAttribute(
+            'aria-label',
+            language === 'en' ? '切换到中文' : 'Switch to English',
+          );
+
+          if (persist) {
+            try {
+              localStorage.setItem('cliecy-ui-language', language);
+            } catch {}
+          }
+        };
+
+        applyLanguage(root.dataset.uiLang === 'en' ? 'en' : 'zh');
+        toggle?.addEventListener('click', () => {
+          applyLanguage(root.dataset.uiLang === 'en' ? 'zh' : 'en', true);
+        });
+      })();
+    </script>
   </body>
 </html>

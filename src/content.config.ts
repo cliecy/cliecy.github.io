@@ -68,8 +68,10 @@ const site = defineCollection({
     name: z.literal('CLIECY'),
     role: z.literal('Developer & Creator'),
     introduction: z.string().min(1),
+    introductionEn: z.string().min(1),
     githubUrl: z.literal('https://github.com/cliecy'),
     seoDescription: z.string().min(1),
+    seoDescriptionEn: z.string().min(1),
   }),
 });
 

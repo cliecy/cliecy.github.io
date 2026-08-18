@@ -1,6 +1,6 @@
 # CLIECY Portfolio
 
-Static portfolio and writing site for [cliecy.github.io](https://cliecy.github.io), built with Astro and file-based content collections.
+Static portfolio and writing site for [cliecy.github.io](https://cliecy.github.io), built with Astro and file-based content collections. The interface defaults to Chinese and includes a persistent English switch; article content remains in its original language.
 
 ## Local development
 

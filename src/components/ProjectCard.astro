@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
+import UiText from './UiText.astro';
 import { entrySlug } from '../lib/content';
 
 interface Props {
@@ -18,13 +19,13 @@ const slug = entrySlug(project.id);
     </a>
   )}
   <div class="content-card__meta">
-    <span>Project</span>
-    {project.data.draft && <span class="draft-badge">Draft</span>}
+    <span><UiText zh="项目" en="Project" /></span>
+    {project.data.draft && <span class="draft-badge"><UiText zh="草稿" en="Draft" /></span>}
   </div>
   <h2><a href={`/projects/${slug}/`}>{project.data.title}</a></h2>
   <p>{project.data.description}</p>
   {project.data.tags.length > 0 && (
-    <ul class="tag-list" aria-label="Technologies">
+    <ul class="tag-list" aria-label="技术" data-aria-zh="技术" data-aria-en="Technologies">
       {project.data.tags.map((tag) => <li><span>{tag}</span></li>)}
     </ul>
   )}

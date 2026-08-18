@@ -1,14 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import UiText from '../components/UiText.astro';
 ---
 
-<BaseLayout title="Page not found" description="The requested page could not be found." noindex>
+<BaseLayout title="页面未找到" titleEn="Page not found" description="找不到你请求的页面。" descriptionEn="The requested page could not be found." noindex>
   <section class="not-found container">
     <p class="not-found__code">404</p>
-    <p class="eyebrow">Off the map</p>
-    <h1>Nothing lives here.</h1>
-    <p>The page may have moved, or it may never have existed.</p>
-    <a href="/">Return home <span aria-hidden="true">→</span></a>
+    <p class="eyebrow"><UiText zh="页面未找到" en="Page not found" /></p>
+    <h1><UiText zh="这里什么也没有。" en="Nothing lives here." /></h1>
+    <p><UiText zh="页面可能已经移动，或者从未存在过。" en="The page may have moved, or it may never have existed." /></p>
+    <a href="/"><UiText zh="返回首页" en="Return home" /> <span aria-hidden="true">→</span></a>
   </section>
 </BaseLayout>
 
@@ -24,15 +25,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .not-found__code {
-    position: absolute;
-    z-index: -1;
-    right: 0;
-    margin: 0;
-    color: rgb(255 255 255 / 3%);
-    font-size: clamp(11rem, 35vw, 29rem);
-    font-weight: 850;
-    line-height: 0.8;
-    letter-spacing: -0.1em;
+    margin: 0 0 1rem;
+    color: var(--faint);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
   }
 
   .not-found h1 {
