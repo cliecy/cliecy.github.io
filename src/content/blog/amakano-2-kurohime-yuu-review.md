@@ -2,7 +2,7 @@
 title: 👑 《アマカノ２》黒姫結灯 路線深掘り感想：拒絶と依存のパラドックス
 description: 結灯の初期の「拒絶と遠ざけ」、そして「恋愛はしない」という断言は、彼女の自己肯定感の低さに基づく最も強固な防御策である。
 pubDate: 2025-12-06
-draft: true
+draft: false
 lang: ja
 ---
 ![image](https://azarashi-soft.nexton-net.jp/amakano2/images/top/header_visual.jpg)
